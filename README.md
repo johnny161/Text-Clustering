@@ -3,6 +3,6 @@
 ## Github Reference:
 https://github.com/liuhuanyong/TopicCluster
 ## Blog Reference：
-使用sklearn提取文本的tfidf特征: https://www.jianshu.com/p/c7e2771eccaa
-sklearn——CountVectorizer详解: https://blog.csdn.net/weixin_38278334/article/details/82320307
-TF-IDF计算与sklearn中CountVectorizer和TfidfTransformer使用: https://blog.csdn.net/wf592523813/article/details/81911155
+##### 使用sklearn提取文本的tfidf特征: https://www.jianshu.com/p/c7e2771eccaa
+##### sklearn——CountVectorizer详解: https://blog.csdn.net/weixin_38278334/article/details/82320307
+##### TF-IDF计算与sklearn中CountVectorizer和TfidfTransformer使用: https://blog.csdn.net/wf592523813/article/details/81911155
