@@ -5,6 +5,8 @@ from sklearn.cluster import KMeans
 from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
 
 '''vectorize the input documents'''
 def tfidf_vector(corpus_path):
@@ -23,7 +25,7 @@ def tfidf_vector(corpus_path):
     counts_train = count_v1.fit_transform(corpus_train)
 
     word_dict = {}
-    for index, word in enumerate(count_v1.get_feature_names()):
+    for index, word in enumerate(count_v1.get_feature_names()):#出现3次以上的关键词
         word_dict[index] = word
     
     print ("the shape of train is " + repr(counts_train.shape))
@@ -84,11 +86,32 @@ def best_kmeans(tfidf_matrix, word_dict):
     plt.title('Eibow for Kmeans clustering')
     plt.show()
 
+'''calculate Silhouette Coefficient'''
+def cal_silhouette_coef(tfidf_train):
+    weight = tfidf_train.toarray()
+    Scores = []
+    for k in range(2, 50):
+        km = KMeans(n_clusters = k)
+        km.fit(weight)
+        Scores.append(silhouette_score(weight, km.labels_, metric='euclidean'))
+    X = range(2, 50)
+    plt.xlabel('K-value')
+    plt.ylabel('Silhouette-Coefficient')
+    plt.plot(X, Scores, 'o-')
+    plt.show()
+
 if __name__ == '__main__':
     corpus_train = "./corpus_train.txt"
     cluster_docs = "./cluster_result_document.txt"
     cluster_keywords = "./cluster_result_keyword.txt"
+
     num_clusters = 7
     tfidf_train, word_dict = tfidf_vector(corpus_train)
+
+    cal_silhouette_coef(tfidf_train) # judge which K-value to take
+
     # best_kmeans(tfidf_train, word_dict)
-    cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_clusters)
+    # cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_clusters)
+
+
+    
