@@ -6,7 +6,9 @@ from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import silhouette_score
+from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+
 
 '''vectorize the input documents'''
 def tfidf_vector(corpus_path):
@@ -57,7 +59,7 @@ def cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_c
     f_clusterwords = open(cluster_keywords, 'w+')
     for ind in order_centroids: # 每个聚类选 50 个词
         words = []
-        for index in ind[:50]:
+        for index in ind[:5]:
             words.append(word_dict[index])
         print (cluster,','.join(words))
         f_clusterwords.write(str(cluster) + '\t' + ','.join(words) + '\n')
@@ -65,13 +67,15 @@ def cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_c
         print ('*****' * 5)
     f_clusterwords.close()
 
+    visualization(tfidf_train.toarray(), km.labels_)
+
 '''select the best cluster num'''
 def best_kmeans(tfidf_matrix, word_dict):
     import matplotlib.pyplot as plt
     # from matplotlib.font_manager import FontProperties
     from scipy.spatial.distance import cdist
     import numpy as np 
-    K = range(1, 10)
+    K = range(1, 50)
     meandistortions = []
     for k in K:
         print (k, '****'*5)
@@ -100,18 +104,38 @@ def cal_silhouette_coef(tfidf_train):
     plt.plot(X, Scores, 'o-')
     plt.show()
 
+'''visualization'''
+def visualization(tfidf_train, labels_):
+    tsne = TSNE(n_components=2)
+    decomposition_data = tsne.fit_transform(tfidf_train)
+
+    x = []
+    y = []
+
+    for i in decomposition_data:
+        x.append(i[0])
+        y.append(i[1])
+
+    fig = plt.figure(figsize=(10, 10))
+    ax = plt.axes()
+    plt.scatter(x, y, c=labels_, marker="x")
+    plt.xticks(())
+    plt.yticks(())
+    plt.show()
+    plt.savefig('./figure/sample.png', aspect=1)
+
 if __name__ == '__main__':
     corpus_train = "./corpus_train.txt"
     cluster_docs = "./cluster_result_document.txt"
     cluster_keywords = "./cluster_result_keyword.txt"
 
-    num_clusters = 7
+    num_clusters = 100
     tfidf_train, word_dict = tfidf_vector(corpus_train)
 
-    cal_silhouette_coef(tfidf_train) # judge which K-value to take
+    # cal_silhouette_coef(tfidf_train) # judge which K-value to take
 
     # best_kmeans(tfidf_train, word_dict)
-    # cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_clusters)
+    cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_clusters)
 
 
     
