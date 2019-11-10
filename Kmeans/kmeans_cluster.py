@@ -8,6 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import silhouette_score
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 '''vectorize the input documents'''
@@ -59,14 +60,14 @@ def cluster_kmeans(tfidf_train, word_dict, cluster_docs, cluster_keywords, num_c
     f_clusterwords = open(cluster_keywords, 'w+')
     for ind in order_centroids: # 每个聚类选 50 个词
         words = []
-        for index in ind[:5]:
+        for index in ind[:10]:
             words.append(word_dict[index])
         print (cluster,','.join(words))
         f_clusterwords.write(str(cluster) + '\t' + ','.join(words) + '\n')
         cluster += 1
         print ('*****' * 5)
     f_clusterwords.close()
-
+    
     visualization(tfidf_train.toarray(), km.labels_)
 
 '''select the best cluster num'''
@@ -119,6 +120,7 @@ def visualization(tfidf_train, labels_):
     fig = plt.figure(figsize=(10, 10))
     ax = plt.axes()
     plt.scatter(x, y, c=labels_, marker="x")
+    plt.title("k = 15")
     plt.xticks(())
     plt.yticks(())
     plt.show()
@@ -129,7 +131,7 @@ if __name__ == '__main__':
     cluster_docs = "./cluster_result_document.txt"
     cluster_keywords = "./cluster_result_keyword.txt"
 
-    num_clusters = 100
+    num_clusters = 15
     tfidf_train, word_dict = tfidf_vector(corpus_train)
 
     # cal_silhouette_coef(tfidf_train) # judge which K-value to take
